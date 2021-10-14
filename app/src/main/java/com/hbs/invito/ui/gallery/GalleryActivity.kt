@@ -21,7 +21,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class MainActivity : AppCompatActivity() {
+class GalleryActivity : AppCompatActivity() {
     private val binding by lazy { ActivityGalleryBinding.inflate(layoutInflater) }
     private val viewModel by lazy {
         ViewModelProvider(this).get(GalleryViewModel::class.java)
