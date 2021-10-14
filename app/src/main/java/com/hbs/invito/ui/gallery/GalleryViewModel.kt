@@ -6,8 +6,8 @@ import android.provider.MediaStore
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.invitogallery.utils.MediaStoreFolderList
-import com.example.invitogallery.utils.MediaStoreImageList
+import com.hbs.invito.utils.MediaStoreFolderList
+import com.hbs.invito.utils.MediaStoreImageList
 import com.hbs.invito.data.MediaStoreFolder
 import com.hbs.invito.data.MediaStoreImage
 import kotlinx.coroutines.Dispatchers
