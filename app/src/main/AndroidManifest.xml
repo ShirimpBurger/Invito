@@ -21,6 +21,13 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+
+        <activity android:name=".ui.login.LoginActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+        </activity>
+          
         <activity
             android:name=".ui.gallery.GalleryActivity"
             android:exported="true">
@@ -30,5 +37,4 @@
             </intent-filter>
         </activity>
     </application>
-
 </manifest>
