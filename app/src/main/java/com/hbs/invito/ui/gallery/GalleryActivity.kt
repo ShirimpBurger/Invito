@@ -72,12 +72,7 @@ class GalleryActivity : AppCompatActivity() {
         })
 
         viewModel.folders.observe(this, { folders ->
-            val adapter = ArrayAdapter(
-                this,
-                android.R.layout.simple_list_item_1,
-                folders.map { it.displayName }
-            )
-            binding.tvGalleryPath.setAdapter(adapter)
+//            binding.tvGalleryPath.text = folders[0].displayName
         })
     }
 
