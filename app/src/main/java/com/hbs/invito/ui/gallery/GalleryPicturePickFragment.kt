@@ -2,6 +2,7 @@ package com.hbs.invito.ui.gallery
 
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.ScaleGestureDetector
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
@@ -62,11 +63,53 @@ class GalleryPicturePickFragment private constructor() : Fragment() {
             viewModel.selectGalleryImage(item)
             galleryPictureAdapter.notifyDataSetChanged()
         }
+
+        val scaleGestureDetector = ScaleGestureDetector(
+            requireContext(),
+            object : ScaleGestureDetector.SimpleOnScaleGestureListener() {
+                var scaleFactor = 1f
+                override fun onScale(detector: ScaleGestureDetector): Boolean {
+                    scaleFactor *= detector.scaleFactor
+                    if (scaleFactor >= 1.40) {
+                        plusSpanCount()
+                        scaleFactor = 1f
+                    }
+                    if (scaleFactor <= 0.60) {
+                        reduceSpanCount()
+                        scaleFactor = 1f
+                    }
+                    return super.onScale(detector)
+                }
+            })
+
+        binding.rvGalleryPictures.setOnTouchListener { _, motionEvent ->
+            scaleGestureDetector.onTouchEvent(motionEvent)
+            return@setOnTouchListener false
+        }
+
     }
 
     private fun observeViewModel() {
         viewModel.images.observe(viewLifecycleOwner, {
             galleryPictureAdapter.submitList(it)
         })
+    }
+
+    private fun plusSpanCount() {
+        val layoutManager = binding.rvGalleryPictures.layoutManager as GridLayoutManager
+        layoutManager.spanCount = if (layoutManager.spanCount + 1 > 8) {
+            8
+        } else {
+            layoutManager.spanCount + 1
+        }
+    }
+
+    private fun reduceSpanCount() {
+        val layoutManager = binding.rvGalleryPictures.layoutManager as GridLayoutManager
+        layoutManager.spanCount = if (layoutManager.spanCount - 1 < 1) {
+            1
+        } else {
+            layoutManager.spanCount - 1
+        }
     }
 }

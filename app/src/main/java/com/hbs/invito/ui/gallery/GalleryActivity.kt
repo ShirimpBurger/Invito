@@ -3,6 +3,7 @@ package com.hbs.invito.ui.gallery
 import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.view.ScaleGestureDetector
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
