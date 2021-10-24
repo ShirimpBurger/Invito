@@ -1,113 +1,81 @@
 package com.hbs.invito.ui.gallery
 
-import android.content.ContentResolver
-import android.content.ContentUris
-import android.provider.MediaStore
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import com.hbs.invito.utils.MediaStoreFolderList
-import com.hbs.invito.utils.MediaStoreImageList
-import com.hbs.invito.data.MediaStoreFolder
-import com.hbs.invito.data.MediaStoreImage
+import android.content.Context
+import androidx.lifecycle.*
+import com.hbs.invito.data.*
+import com.hbs.invito.domain.model.MediaRepository
+import com.hbs.invito.domain.model.MediaRepositoryImpl
+import com.hbs.invito.mappers.toPresentation
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import java.text.SimpleDateFormat
-import java.util.*
-import java.util.concurrent.TimeUnit
 
 class GalleryViewModel : ViewModel() {
-    private val _images = MutableLiveData<MediaStoreImageList>()
-    val images: LiveData<MediaStoreImageList> = _images
+    private val _images = MutableLiveData<RecyclerViewMediaImageList>()
+    val images: LiveData<RecyclerViewMediaImageList> = _images
 
     private val _folders = MutableLiveData<MediaStoreFolderList>()
     val folders: LiveData<MediaStoreFolderList> = _folders
 
-    suspend fun queryImageFolders(contentResolver: ContentResolver) {
-        val folders = mutableListOf<MediaStoreFolder>()
+    private val _selectImages = MutableLiveData<RecyclerViewMediaImageList>(listOf())
+    val selectImages: LiveData<RecyclerViewMediaImageList> = _selectImages
+
+    private val mediaRepository: MediaRepository = MediaRepositoryImpl()
+
+    suspend fun queryImageFolders(applicationContext: Context) {
+        //TODO : applicationContext는 추후에 DI로 대체될 것.
         withContext(Dispatchers.IO) {
-            val projection = arrayOf(
-                MediaStore.Images.Media.BUCKET_ID,
-                MediaStore.Images.Media.BUCKET_DISPLAY_NAME
-            )
-
-            val sortOrder = "${MediaStore.Images.Media.BUCKET_DISPLAY_NAME} DESC"
-
-            val query = contentResolver.query(
-                MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                projection,
-                null,
-                null,
-                sortOrder
-            )
-
-            query?.use { cursor ->
-                val idColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.BUCKET_ID)
-                val displayNameColumn =
-                    cursor.getColumnIndexOrThrow(MediaStore.Images.Media.BUCKET_DISPLAY_NAME)
-
-                while (cursor.moveToNext()) {
-                    val id = cursor.getLong(idColumn)
-                    val displayName = cursor.getString(displayNameColumn)
-                    val contentUri = ContentUris.withAppendedId(
-                        MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                        id
-                    )
-
-                    val folder = MediaStoreFolder(id, displayName, contentUri)
-                    folders += folder
-                }
-                _folders.postValue(folders)
-            }
+            mediaRepository
+                .queryAllMediaStoreFolders(applicationContext)
+                ?.let { _folders.postValue(it) }
         }
     }
 
-    suspend fun queryAllImage(contentResolver: ContentResolver): List<MediaStoreImage> {
-        val images = mutableListOf<MediaStoreImage>()
+    suspend fun queryAllImage(applicationContext: Context) {
         withContext(Dispatchers.IO) {
-            val projection = arrayOf(
-                MediaStore.Images.Media._ID,
-                MediaStore.Images.Media.DISPLAY_NAME,
-                MediaStore.Images.Media.DATE_TAKEN
-            )
-
-            val sortOrder = "${MediaStore.Images.Media.DATE_TAKEN} DESC "
-
-            val query = contentResolver.query(
-                MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                projection,
-                null,
-                null,
-                sortOrder
-            )
-
-            query?.use { cursor ->
-                val idColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media._ID)
-                val dateModifiedColumn =
-                    cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATE_TAKEN)
-                val displayNameColumn =
-                    cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DISPLAY_NAME)
-
-                while (cursor.moveToNext()) {
-                    val id = cursor.getLong(idColumn)
-                    val dateModified =
-                        Date(TimeUnit.SECONDS.toMillis(cursor.getLong(dateModifiedColumn)))
-                    val displayName = cursor.getString(displayNameColumn)
-                    val contentUri = ContentUris.withAppendedId(
-                        MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                        id
-                    )
-
-                    val image = MediaStoreImage(id, displayName, dateModified, contentUri)
-                    images += image
-                }
-                _images.postValue(images)
-            }
+            mediaRepository
+                .queryAllImages(applicationContext)
+                ?.map { it.toPresentation() }
+                ?.toList()
+                ?.let { _images.postValue(it) }
         }
-
-        return images
     }
 
-    private fun dateToTimestamp(day: Int, month: Int, year: Int): Long =
-        SimpleDateFormat("dd.MM.yyyy").parse("$day.$month.$year")?.time ?: 0
+    fun selectGalleryImage(image: MediaStoreImagePresentation) {
+        val selectGalleries = selectImages.value?.toMutableList() ?: return
+        val selectGallery =
+            selectGalleries.firstOrNull { it.item.contentUri == image.item.contentUri }
+
+        if (selectGallery == null) {
+            val newSelectGallery = image.apply {
+                isVisible = true
+                labeling = selectGalleries.size.toString()
+            }
+            selectGalleries += newSelectGallery
+        } else {
+            var isFindSelectGallery = false
+            val oldSelectGallery = image.apply {
+                isVisible = false
+                labeling = "0"
+            }
+
+            selectGalleries
+                .forEachIndexed { index, recyclerViewItem ->
+                    recyclerViewItem.labeling = if (isFindSelectGallery) {
+                        (index - 1).toString()
+                    } else {
+                        isFindSelectGallery = findSelectGallery(oldSelectGallery, recyclerViewItem)
+                        index.toString()
+                    }
+                }
+            selectGalleries -= oldSelectGallery
+        }
+        _selectImages.value = selectGalleries.toList()
+    }
+
+    private fun findSelectGallery(
+        oldItem: MediaStoreImagePresentation,
+        newItem: MediaStoreImagePresentation
+    ): Boolean {
+        return oldItem == newItem
+    }
 }

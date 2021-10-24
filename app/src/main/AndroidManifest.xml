@@ -31,7 +31,8 @@
           
         <activity
             android:name=".ui.gallery.GalleryActivity"
-            android:exported="true">
+            android:exported="true"
+            android:theme="@style/Theme.Invito">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.LAUNCHER" />

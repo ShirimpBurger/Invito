@@ -32,69 +32,67 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
 
-                    <com.google.android.material.imageview.ShapeableImageView
-                        android:id="@+id/iv_gallery_close"
-                        android:layout_width="48dp"
-                        android:layout_height="48dp"
-                        android:layout_marginStart="16dp"
-                        android:layout_marginTop="12dp"
-                        android:padding="12dp"
-                        app:layout_constraintLeft_toLeftOf="parent"
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/container_folder_picker"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
                         app:layout_constraintTop_toTopOf="parent"
-                        app:srcCompat="@drawable/ic_close" />
+                        tools:layout_editor_absoluteX="0dp">
 
-                    <com.google.android.material.textfield.TextInputLayout
-                        android:id="@+id/dropdown_menu"
-                        android:layout_width="128dp"
-                        android:layout_height="64dp"
-                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
-                        app:layout_constraintBottom_toBottomOf="@id/iv_gallery_close"
-                        app:layout_constraintStart_toEndOf="@id/iv_gallery_close"
-                        app:layout_constraintTop_toTopOf="@id/iv_gallery_close">
+                        <com.google.android.material.imageview.ShapeableImageView
+                            android:id="@+id/iv_gallery_close"
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
+                            android:layout_marginStart="12dp"
+                            android:layout_marginTop="12dp"
+                            android:layout_marginBottom="12dp"
+                            android:padding="12dp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:srcCompat="@drawable/ic_close" />
 
-                        <AutoCompleteTextView
+                        <TextView
                             android:id="@+id/tv_gallery_path"
-                            android:layout_width="match_parent"
+                            android:layout_width="wrap_content"
                             android:layout_height="match_parent"
+                            android:layout_marginStart="12dp"
+                            android:drawablePadding="12dp"
+                            android:fontFamily="@font/notosans_kr_medium"
+                            android:inputType="none"
                             android:onClick="@{view->galleryCallback.onClick(view)}"
                             android:text="갤러리"
-                            android:textSize="14dp" />
+                            android:textColor="@color/black"
+                            app:drawableEndCompat="@drawable/ic_arrow"
+                            app:layout_constraintBottom_toBottomOf="@id/iv_gallery_close"
+                            app:layout_constraintStart_toEndOf="@id/iv_gallery_close"
+                            app:layout_constraintTop_toTopOf="@id/iv_gallery_close"
+                            tools:text="갤러리" />
 
-                    </com.google.android.material.textfield.TextInputLayout>
-
-
-                    <TextView
-                        android:id="@+id/tv_download"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="16dp"
-                        android:text="다운로드"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
+                    </androidx.constraintlayout.widget.ConstraintLayout>
 
                     <ImageView
-                        android:layout_width="match_parent"
-                        android:layout_height="512dp"
-                        android:layout_marginTop="8dp"
-                        android:scaleType="centerCrop"
-                        android:src="@drawable/coffee"
-                        app:layout_constraintTop_toBottomOf="@id/iv_gallery_close"
+                        android:id="@+id/iv_gallery_selection"
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:scaleType="center"
+                        tools:src="@drawable/coffee"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintDimensionRatio="1:1"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/container_folder_picker"
                         app:layout_scrollFlags="scroll|enterAlways|enterAlwaysCollapsed" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
             </com.google.android.material.appbar.CollapsingToolbarLayout>
         </com.google.android.material.appbar.AppBarLayout>
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_gallery_pictures"
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/gallery_fragment_conatiner"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
             app:layout_behavior="@string/appbar_scrolling_view_behavior"
-            app:spanCount="4"
-            tools:itemCount="24"
-            tools:listitem="@layout/gallery_picture_item">
-
-        </androidx.recyclerview.widget.RecyclerView>
+            tools:layout="@layout/gallery_picture_pick_fragment"/>
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </layout>
