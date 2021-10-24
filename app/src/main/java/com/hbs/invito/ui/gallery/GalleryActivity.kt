@@ -10,6 +10,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.hbs.invito.databinding.ActivityGalleryBinding
 import com.hbs.invito.extensions.PermissionEnvironment
+import com.hbs.invito.extensions.bindingadapter.setPickGalleryImage
 import com.hbs.invito.extensions.checkAndRequestPermissions
 import kotlinx.coroutines.launch
 
@@ -46,6 +47,7 @@ class GalleryActivity : AppCompatActivity() {
     }
 
     private fun initView() {
+        binding.lifecycleOwner = this
         binding.setGalleryCallback { view ->
 
         }
@@ -63,6 +65,10 @@ class GalleryActivity : AppCompatActivity() {
     private fun observeViewModel() {
         viewModel.folders.observe(this, { folders ->
 //            binding.tvGalleryPath.text = folders[0].displayName
+        })
+
+        viewModel.selectImages.observe(this, { selectImages ->
+            binding.ivGallerySelection.setPickGalleryImage(selectImages)
         })
     }
 

@@ -72,10 +72,11 @@
                     </androidx.constraintlayout.widget.ConstraintLayout>
 
                     <ImageView
+                        android:id="@+id/iv_gallery_selection"
                         android:layout_width="0dp"
                         android:layout_height="0dp"
-                        android:scaleType="centerCrop"
-                        android:src="@drawable/coffee"
+                        android:scaleType="center"
+                        tools:src="@drawable/coffee"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintDimensionRatio="1:1"
                         app:layout_constraintEnd_toEndOf="parent"
