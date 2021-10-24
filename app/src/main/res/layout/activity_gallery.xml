@@ -45,9 +45,9 @@
 
                     <com.google.android.material.textfield.TextInputLayout
                         android:id="@+id/dropdown_menu"
-                        android:layout_width="128dp"
-                        android:layout_height="64dp"
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                        android:layout_width="256dp"
+                        android:layout_height="wrap_content"
                         app:layout_constraintBottom_toBottomOf="@id/iv_gallery_close"
                         app:layout_constraintStart_toEndOf="@id/iv_gallery_close"
                         app:layout_constraintTop_toTopOf="@id/iv_gallery_close">
@@ -56,28 +56,23 @@
                             android:id="@+id/tv_gallery_path"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
+                            android:inputType="none"
                             android:onClick="@{view->galleryCallback.onClick(view)}"
-                            android:text="갤러리"
-                            android:textSize="14dp" />
+                            android:textSize="14sp"
+                            tools:text="갤러리" />
 
                     </com.google.android.material.textfield.TextInputLayout>
 
-
-                    <TextView
-                        android:id="@+id/tv_download"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="16dp"
-                        android:text="다운로드"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
-
                     <ImageView
-                        android:layout_width="match_parent"
-                        android:layout_height="512dp"
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
                         android:layout_marginTop="8dp"
                         android:scaleType="centerCrop"
                         android:src="@drawable/coffee"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintDimensionRatio="1:1"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/iv_gallery_close"
                         app:layout_scrollFlags="scroll|enterAlways|enterAlwaysCollapsed" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
