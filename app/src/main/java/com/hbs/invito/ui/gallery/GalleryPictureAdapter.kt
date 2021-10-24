@@ -2,17 +2,15 @@ package com.hbs.invito.ui.gallery
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
-import com.hbs.invito.data.MediaStoreImage
 import com.hbs.invito.databinding.GalleryPictureItemBinding
+import com.hbs.invito.data.MediaStoreImagePresentation
+import com.hbs.invito.extensions.ViewClickDataCallback
 
-class GalleryPictureAdapter :
-    ListAdapter<MediaStoreImage, GalleryPictureAdapter.ViewHolder>(galleryDiffUtil) {
+class GalleryPictureAdapter(var callback:ViewClickDataCallback<MediaStoreImagePresentation>? = null) :
+    ListAdapter<MediaStoreImagePresentation, GalleryPictureAdapter.ViewHolder>(galleryDiffUtil) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder(GalleryPictureItemBinding.inflate(LayoutInflater.from(parent.context)))
@@ -22,35 +20,36 @@ class GalleryPictureAdapter :
         holder.bind(getItem(position))
     }
 
-    class ViewHolder(private val binding: GalleryPictureItemBinding) :
+    override fun getItemId(position: Int): Long {
+        return getItem(position).item.id
+    }
+
+    inner class ViewHolder(private val binding: GalleryPictureItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
-        private val widthOfGalleryPicture by lazy {
-            (binding.root.resources.displayMetrics.run { widthPixels / density }).toInt()
-        }
-
         init {
-            binding.ivGalleryPicture.layoutParams = ConstraintLayout.LayoutParams(widthOfGalleryPicture, widthOfGalleryPicture)
+            binding.callback = callback
         }
 
-        fun bind(media: MediaStoreImage) {
-            Glide
-                .with(binding.root)
-                .load(media.contentUri)
-                .transition(DrawableTransitionOptions.withCrossFade())
-                .override(widthOfGalleryPicture, widthOfGalleryPicture)
-                .into(binding.ivGalleryPicture)
+        fun bind(presentation: MediaStoreImagePresentation) {
+            binding.presentation = presentation
         }
     }
 
 }
 
-val galleryDiffUtil = object : DiffUtil.ItemCallback<MediaStoreImage>() {
-    override fun areItemsTheSame(oldItem: MediaStoreImage, newItem: MediaStoreImage): Boolean {
-        return oldItem.contentUri == newItem.contentUri
+val galleryDiffUtil = object : DiffUtil.ItemCallback<MediaStoreImagePresentation>() {
+    override fun areItemsTheSame(
+        oldItem: MediaStoreImagePresentation,
+        newItem: MediaStoreImagePresentation
+    ): Boolean {
+        return oldItem.item.id == oldItem.item.id
     }
 
-    override fun areContentsTheSame(oldItem: MediaStoreImage, newItem: MediaStoreImage): Boolean {
-        return oldItem.contentUri == newItem.contentUri
+    override fun areContentsTheSame(
+        oldItem: MediaStoreImagePresentation,
+        newItem: MediaStoreImagePresentation
+    ): Boolean {
+        return oldItem.item == newItem.item
     }
 }
