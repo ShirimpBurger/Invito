@@ -87,16 +87,11 @@
             </com.google.android.material.appbar.CollapsingToolbarLayout>
         </com.google.android.material.appbar.AppBarLayout>
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_gallery_pictures"
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/gallery_fragment_conatiner"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
             app:layout_behavior="@string/appbar_scrolling_view_behavior"
-            app:spanCount="4"
-            tools:itemCount="24"
-            tools:listitem="@layout/gallery_picture_item">
-
-        </androidx.recyclerview.widget.RecyclerView>
+            tools:layout="@layout/gallery_picture_pick_fragment"/>
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </layout>

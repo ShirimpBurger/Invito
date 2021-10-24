@@ -4,14 +4,12 @@ import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.View
-import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.hbs.invito.databinding.ActivityGalleryBinding
 import com.hbs.invito.extensions.PermissionEnvironment
-import com.hbs.invito.extensions.ViewClickDataCallback
 import com.hbs.invito.extensions.checkAndRequestPermissions
 import kotlinx.coroutines.launch
 
@@ -19,9 +17,6 @@ class GalleryActivity : AppCompatActivity() {
     private val binding by lazy { ActivityGalleryBinding.inflate(layoutInflater) }
     private val viewModel by lazy {
         ViewModelProvider(this).get(GalleryViewModel::class.java)
-    }
-    private val galleryPictureAdapter = GalleryPictureAdapter().apply {
-        setHasStableIds(true)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -59,18 +54,13 @@ class GalleryActivity : AppCompatActivity() {
             finish()
         }
 
-        binding.rvGalleryPictures.adapter = galleryPictureAdapter
-        galleryPictureAdapter.callback = ViewClickDataCallback { _, item ->
-            viewModel.selectGalleryImage(item)
-            galleryPictureAdapter.notifyDataSetChanged()
-        }
+        supportFragmentManager
+            .beginTransaction()
+            .replace(binding.galleryFragmentConatiner.id, GalleryPicturePickFragment.newInstance(3))
+            .commit()
     }
 
     private fun observeViewModel() {
-        viewModel.images.observe(this, {
-            galleryPictureAdapter.submitList(it)
-        })
-
         viewModel.folders.observe(this, { folders ->
 //            binding.tvGalleryPath.text = folders[0].displayName
         })
